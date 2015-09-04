@@ -1,6 +1,10 @@
 ﻿Imports System.Net
 Imports System.IO
 Imports System.Text
+Imports System.Web.Helpers
+Imports System.Web.Script.Serialization
+
+
 
 Module Module1
 
@@ -11,7 +15,19 @@ Module Module1
             Dim data = Encoding.UTF8.GetBytes(jsonString)
             Dim result_post = SendRequest(New Uri(uri), data, "application/json", "POST")
 
+
+            Dim BoxStateDynamic = System.Web.Helpers.Json.Decode(result_post)
+            Console.WriteLine(BoxStateDynamic.State)
+
+
+            Dim jss = New JavaScriptSerializer()
+            Dim BoxStateObject = jss.Deserialize(Of BoxStateObject)(result_post)
+            Console.WriteLine(BoxStateObject.state)
+
+
             Console.WriteLine(result_post)
+
+
 
             Threading.Thread.Sleep(1000)
 
@@ -39,5 +55,21 @@ Module Module1
 
         Return res
     End Function
+
+    Public Structure BoxStateObject
+        Public state As String
+        Public products As ProductInBoxInfo()
+        Public error_message As String
+        Public error_description As String
+        Public message_timestamp As UInteger
+        Public disabled As Boolean
+        Public calibrated As Boolean
+        Public calibration_requested As Boolean
+    End Structure
+
+    Public Structure ProductInBoxInfo
+        Public Jlid As String
+        Public TestResult As String
+    End Structure
 
 End Module
