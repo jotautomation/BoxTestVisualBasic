@@ -1,7 +1,6 @@
 ﻿Imports System.Net
 Imports System.IO
 Imports System.Text
-Imports System.Web.Helpers
 Imports System.Web.Script.Serialization
 Imports System.Threading
 
@@ -12,7 +11,7 @@ Module Module1
     Sub Main()
 
         Dim bstop As Boolean = False
-        Dim boxip As String = "10.186.81.193"
+        Dim boxip As String = "10.186.81.194"
 
 
         Dim t As New Thread(Sub()
@@ -20,12 +19,13 @@ Module Module1
                                 While (Not bstop)
 
                                     Dim result_post = HandleBoxCmd("get_state", False, boxip, 1)
-                                    Dim BoxStateDynamic = System.Web.Helpers.Json.Decode(result_post)
-                                    Console.WriteLine(BoxStateDynamic.State)
 
                                     Dim jss = New JavaScriptSerializer()
                                     Dim BoxStateObject = jss.Deserialize(Of BoxStateObject)(result_post)
                                     Console.WriteLine(BoxStateObject.state)
+
+                                    Dim BoxState = jss.Deserialize(Of Object)(result_post)
+                                    Console.WriteLine(BoxState("state"))
 
                                     Console.WriteLine(result_post)
 
