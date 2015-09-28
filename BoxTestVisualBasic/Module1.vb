@@ -73,6 +73,30 @@ Module Module1
                 result_post = HandleBoxCmd("reset", False, boxip, 1)
             End If
 
+            If input.Equals("dis") Then
+                result_post = HandleBoxSetting("disabled", True, boxip, 1)
+            End If
+
+            If input.Equals("ena") Then
+                result_post = HandleBoxSetting("disabled", False, boxip, 1)
+            End If
+
+            If input.Equals("cali") Then
+                result_post = HandleBoxSetting("calibrated", True, boxip, 1)
+            End If
+
+            If input.Equals("uncali") Then
+                result_post = HandleBoxSetting("calibrated", False, boxip, 1)
+            End If
+
+            If input.Equals("calreq") Then
+                result_post = HandleBoxSetting("calibration_requested", True, boxip, 1)
+            End If
+
+            If input.Equals("uncalreq") Then
+                result_post = HandleBoxSetting("calibration_requested", False, boxip, 1)
+            End If
+
             If input.Equals("re") Then
                 result_post = HandleBoxCmd("get_state", False, boxip, 1)
                 Dim jss = New JavaScriptSerializer()
@@ -117,6 +141,21 @@ Module Module1
     Public Function HandleBoxCmd(cmd As String, withproduct As Boolean, boxip As String, slidenumber As Integer) As String
         Return HandleBoxCmd(cmd, withproduct, "", boxip, slidenumber)
     End Function
+
+    Public Function HandleBoxSetting(SettingName As String, value As Boolean, boxip As String, slidenumber As Integer) As String
+
+        Dim commandToBeSent As Object = New With { _
+            Key .cmd = "change_setting", _
+            Key .name = SettingName, _
+            Key .value = value _
+        }
+
+
+        Dim response As [String] = PostCmd(String.Format("http://{0}/slide{1}/command", boxip, slidenumber.ToString()), commandToBeSent)
+        Return response
+
+    End Function
+
 
     Public Function PostCmd(postDestination As String, objectToSend As Object) As String
         'Send the message
@@ -173,6 +212,5 @@ Module Module1
         Public products As ProductInBoxInfo()
         Public scanner_secret As String
     End Structure
-
 
 End Module
